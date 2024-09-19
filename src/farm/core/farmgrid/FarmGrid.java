@@ -44,7 +44,7 @@ public class FarmGrid implements Grid{
         while (i < rows) {
             int j = 0;
             while (j < columns) {
-                List<String> spotOnGrid = new ArrayList();
+                List<String> spotOnGrid = new ArrayList<>();
                 spotOnGrid.add("ground");
                 spotOnGrid.add(" ");
                 farmState.add(spotOnGrid);
