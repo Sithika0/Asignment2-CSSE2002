@@ -5,11 +5,14 @@
     <scanScope>JavaOnly</scanScope>
     <copyLibs>true</copyLibs>
     <option name="thirdPartyClasspath" />
-    <option name="activeLocationIds" />
+    <option name="activeLocationIds">
+      <option value="f64fa534-0f4d-4d00-a1b0-e6c795ad572a" />
+    </option>
     <option name="locations">
       <list>
         <ConfigurationLocation id="bundled-sun-checks" type="BUNDLED" scope="All" description="Sun Checks">(bundled)</ConfigurationLocation>
         <ConfigurationLocation id="bundled-google-checks" type="BUNDLED" scope="All" description="Google Checks">(bundled)</ConfigurationLocation>
+        <ConfigurationLocation id="f64fa534-0f4d-4d00-a1b0-e6c795ad572a" type="HTTP_URL" scope="All" description="CSSE2002">https://csse2002.uqcloud.net/checkstyle.xml</ConfigurationLocation>
       </list>
     </option>
   </component>

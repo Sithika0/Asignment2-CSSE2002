@@ -9,16 +9,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * The FarmGrid is a mini-game of the farm game
+ * where you can place animals and plants on a grid.
+ */
+public class FarmGrid implements Grid {
 
-public class FarmGrid implements Grid{
-
-    public List<List<String>> farmState;
-    public int rows;
-    public int columns;
-    public String farmType;
+    private List<List<String>> farmState;
+    private final int rows;
+    private final int columns;
+    private final String farmType;
 
     // randomQuality is used to help you generate quality for products
-    public RandomQuality randomQuality;
+    private RandomQuality randomQuality;
 
 
     /**
@@ -30,34 +33,26 @@ public class FarmGrid implements Grid{
     public FarmGrid(int rows, int columns, String farmType) {
 
         this.farmType = farmType;
+        this.rows = rows; // swap rows and columns
+        this.columns = columns;
 
-        this.rows = columns;
-        this.columns = rows;
-
-
-        farmState = new ArrayList<List<String>>();
-
+        farmState = new ArrayList<>();
         randomQuality = null;
 
         // populate the initial farm with empty ground
-        int i = 0;
-        while (i < rows) {
-            int j = 0;
-            while (j < columns) {
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
                 List<String> spotOnGrid = new ArrayList<>();
                 spotOnGrid.add("ground");
                 spotOnGrid.add(" ");
                 farmState.add(spotOnGrid);
-
-
             }
-            i++;
         }
     }
 
     /**
      * Default constructor for the FarmGrid, creating a plant farm.
-     *
      * NOTE: whatever class you implement that extends Grid *must* have a constructor
      * with this signature for testing purposes.
      *
@@ -66,9 +61,29 @@ public class FarmGrid implements Grid{
      * @requires rows > 0 && columns > 0
      */
     public FarmGrid(int rows, int columns) {
-        this(rows, columns, "plant");
+        this.farmType = "plant";
+        this.rows = rows;
+        this.columns = columns;
+
+        farmState = new ArrayList<>();
+        randomQuality = null;
+
+        // populate the initial farm with empty ground
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                List<String> spotOnGrid = new ArrayList<>();
+                spotOnGrid.add("ground");
+                spotOnGrid.add(" ");
+                farmState.add(spotOnGrid);
+            }
+        }
     }
 
+    /**
+     * return the type of farm
+     * @return the type of farm
+     */
     public String getFarmType() {
         return this.farmType;
     }
@@ -78,7 +93,7 @@ public class FarmGrid implements Grid{
 
         int positionIndex = (row * this.columns) + (column);
 
-        if (row <= 0 || column <= 0) {
+        if (row < 0 || column < 0) {
             return false;
         }
 
@@ -97,19 +112,17 @@ public class FarmGrid implements Grid{
             itemName = "cow";
         } else if (symbol == '\u0D94') {
             itemName = "sheep";
-        }
-        else {
+        } else {
             return false;
         }
 
-
-
-        String symbolString = Integer.toString(symbol);
+        String symbolString = String.valueOf(symbol);
 
         try {
-
             if (!this.farmState.get(positionIndex).get(1).equals(" ")) {
                 throw new IllegalStateException("Something is already there!");
+            } else {
+                this.farmState.get(positionIndex).set(1, symbolString);
             }
         } catch (IndexOutOfBoundsException e) {
             return false;
@@ -119,7 +132,8 @@ public class FarmGrid implements Grid{
         // if the item to place is an animal
         if (this.farmType.equals("animal")) {
             if (itemName.equals("chicken") || itemName.equals("cow") || itemName.equals("sheep")) {
-                List<String> newPositionInfo = List.of(itemName, symbolString, "Fed: false", "Collected: false");
+                List<String> newPositionInfo = List.of(itemName, symbolString, "Fed: false",
+                        "Collected: false");
                 this.farmState.set(positionIndex, newPositionInfo);
                 return true;
             } else {
@@ -139,18 +153,17 @@ public class FarmGrid implements Grid{
 
     @Override
     public int getRows() {
-
         return this.rows;
-
     }
 
     @Override
     public int getColumns() {
-        return this.columns - 1;
+        return this.columns;
     }
 
     public void remove(int row, int column) {
         int positionIndex = (row * this.columns) + column;
+        // >= not >
         if (positionIndex > farmState.size()) {
             return;
         }
@@ -162,7 +175,7 @@ public class FarmGrid implements Grid{
         }
 
         // replace the spot with empty ground
-        List<String> spotOnGrid = new ArrayList();
+        List<String> spotOnGrid = new ArrayList<>();
         spotOnGrid.add("ground");
         spotOnGrid.add(" ");
         farmState.set(positionIndex, spotOnGrid);
@@ -184,9 +197,9 @@ public class FarmGrid implements Grid{
         // note System.lineSeparator() is just \n but ensures it works
         // on all operating systems.
 
-        for (int i=0; i < this.rows;) {
+        for (int i = 0; i < this.rows; i++) { // did not increment i
             farmDisplay += "| ";
-            for (int j=0; j < this.columns; j++) {
+            for (int j = 0; j < this.columns; j++) {
                 int positionIndex = (i * this.columns) + j;
                 farmDisplay += farmState.get(positionIndex).get(1) + " ";
             }
@@ -206,7 +219,10 @@ public class FarmGrid implements Grid{
     public Product harvest(int row, int column) throws UnableToInteractException {
         int positionIndex = row * this.columns + column;
 
-        if (column <= -1) {
+        if (column < 0 || row < 0) {
+            throw new UnableToInteractException("You can't harvest this location");
+        }
+        if (row > this.rows - 1 || column > this.columns - 1) {
             throw new UnableToInteractException("You can't harvest this location");
         }
 
@@ -225,7 +241,7 @@ public class FarmGrid implements Grid{
 
         // if the position contains an animal
         if ((positionInfo.get(0).equals("cow") || positionInfo.get(0).equals("chicken")
-        || positionInfo.get(0).equals("sheep")) && this.farmType.equals("animal")) {
+                || positionInfo.get(0).equals("sheep")) && this.farmType.equals("animal")) {
             // check fed and collected status of animal
             if (positionInfo.get(2).equals("Fed: false")) {
                 throw new UnableToInteractException("You have not fed this animal today!");
@@ -238,26 +254,29 @@ public class FarmGrid implements Grid{
                 Quality quality = randomQuality.getRandomQuality();
 
                 //return product and set collected to true
-                if (positionInfo.get(0).equals("cow")) {
-                    positionInfo = List.of(positionInfo.get(0), positionInfo.get(1), positionInfo.get(2), "Collected: true");
-                    farmState.set(positionIndex, positionInfo);
-                    return new Egg(quality);
-
-                } else if (positionInfo.get(0).equals("chicken")) {
-                    positionInfo = List.of(positionInfo.get(0), positionInfo.get(1), positionInfo.get(2), "Collected: true");
-                    farmState.set(positionIndex, positionInfo);
-                    return new Egg(quality);
-
-                } else if (positionInfo.get(0).equals("sheep")) {
-                    positionInfo = List.of(positionInfo.get(0), positionInfo.get(1), positionInfo.get(2), "Collected: true");
-                    farmState.set(positionIndex, positionInfo);
-                    return new Wool(quality);
+                switch (positionInfo.get(0)) {
+                    case "cow" -> {
+                        positionInfo = List.of(positionInfo.get(0), positionInfo.get(1), positionInfo.get(2),
+                                "Collected: true");
+                        farmState.set(positionIndex, positionInfo);
+                        return new Egg(quality);
+                    }
+                    case "chicken" -> {
+                        positionInfo = List.of(positionInfo.get(0), positionInfo.get(1), positionInfo.get(2), "Collected: true");
+                        farmState.set(positionIndex, positionInfo);
+                        return new Egg(quality);
+                    }
+                    case "sheep" -> {
+                        positionInfo = List.of(positionInfo.get(0), positionInfo.get(1), positionInfo.get(2), "Collected: true");
+                        farmState.set(positionIndex, positionInfo);
+                        return new Wool(quality);
+                    }
                 }
             } else {
                 throw new UnableToInteractException("You have an animal on a plant farm!");
             }
-        } else if ((positionInfo.get(0).equals("wheat") ||
-        positionInfo.get(0).equals("berry") || positionInfo.get(0).equals("coffee")) && this.farmType.equals("plant")) {
+        } else if ((positionInfo.get(0).equals("wheat")
+                || positionInfo.get(0).equals("berry") || positionInfo.get(0).equals("coffee")) && this.farmType.equals("plant")) {
             // get a random quality
            Quality quality = randomQuality.getRandomQuality();
 
@@ -265,7 +284,7 @@ public class FarmGrid implements Grid{
             // check stage
             if (positionInfo.get(0).equals("wheat")) {
                 if (positionInfo.get(1).equals("#")) {
-                    positionInfo = List.of(positionInfo.get(0), "\u1F34", "Stage: 0");
+                    positionInfo = List.of(positionInfo.getFirst(), "\u1F34", "Stage: 0");
                     farmState.set(positionIndex, positionInfo);
                     return new Bread(quality);
                 } else {
@@ -274,7 +293,7 @@ public class FarmGrid implements Grid{
 
             } else if (positionInfo.get(0).equals("coffee")) {
                 if (positionInfo.get(1).equals("%")) {
-                    positionInfo = List.of(positionInfo.get(0), ":", "Stage: 0");
+                    positionInfo = List.of(positionInfo.getFirst(), ":", "Stage: 0");
                     farmState.set(positionIndex, positionInfo);
                     return new Coffee(quality);
                 } else {
@@ -283,7 +302,7 @@ public class FarmGrid implements Grid{
 
             } else if (positionInfo.get(0).equals("berry")) {
                 if (positionInfo.get(1).equals("@")) {
-                    positionInfo = List.of(positionInfo.get(0), ".", "Stage: 0");
+                    positionInfo = List.of(positionInfo.getFirst(), ".", "Stage: 0");
                     farmState.set(positionIndex, positionInfo);
                     return new Jam(quality);
                 } else {
@@ -299,20 +318,22 @@ public class FarmGrid implements Grid{
     @Override
     public boolean interact(String command, int row, int column) throws UnableToInteractException {
         // if feeding an animal
-        if (command.equals("feed")) {
-            if (this.farmType.equals("animal")) {
-                return feed(row, column);
-            } else {
-                throw new UnableToInteractException("You cannot feed something that is not an animal!");
+        switch (command) {
+            case "feed" -> {
+                if (this.farmType.equals("animal")) {
+                    return feed(row, column);
+                } else {
+                    throw new UnableToInteractException("You cannot feed something that is not an animal!");
+                }
             }
-        }
-        if (command.equals("end-day")) {
-            this.endDay();
-            return true;
-        }
-        if (command.equals("remove")) {
-            this.remove(row, column);
-            return true;
+            case "end-day" -> {
+                this.endDay();
+                return true;
+            }
+            case "remove" -> {
+                this.remove(row, column);
+                return true;
+            }
         }
         throw new UnableToInteractException("Unknown command: " + command);
     }
@@ -324,24 +345,25 @@ public class FarmGrid implements Grid{
      * @return true iff the animal was fed, else false.
      */
     public boolean feed(int row, int col) {
-
-       if (row > this.rows - 1 || row <= -1) {
+        // if coordinates are out of bounds return false
+        if (row > this.rows - 1 || row < 0) {
             return false;
         }
-        if (col > this.columns - 1 || col <= -1) {
+        if (col > this.columns - 1 || col < 0) {
             return false;
         }
 
 
 
         int positionIndex = (row * this.columns) + col;
-        if (positionIndex > farmState.size()) {
+        // >= not >
+        if (positionIndex >= farmState.size()) {
             return false;
         }
 
         List<String> animalsInAList = List.of("cow", "chicken", "sheep");
         // if the position coordinate is an animal
-        if (animalsInAList.contains(this.farmState.get(positionIndex).get(0))) {
+        if (animalsInAList.contains(this.farmState.get(positionIndex).getFirst())) {
             List<String> positionInfo = farmState.get(positionIndex);
             // set fed to true
             farmState.set(positionIndex, List.of(positionInfo.get(0), positionInfo.get(1),

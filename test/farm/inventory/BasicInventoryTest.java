@@ -5,16 +5,19 @@ import farm.core.InvalidStockRequestException;
 import farm.inventory.product.*;
 import farm.inventory.product.data.Barcode;
 import farm.inventory.product.data.Quality;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+/**
+ * Testing the BasicInventory class.
+ */
 public class BasicInventoryTest {
     Inventory inventory;
 
+    /**
+     * Reset the inventory before each test.
+     */
     @Before
     public void setup() {
         inventory = new BasicInventory();
@@ -33,7 +36,8 @@ public class BasicInventoryTest {
     }
 
     /**
-     * Check if one product can be added and returned.
+     * One product is added to the inventory.
+     * The inventory should return a list with that product.
      */
     @Test
     public void addOneProductTest() {
@@ -47,6 +51,7 @@ public class BasicInventoryTest {
 
     /**
      * Check if multiple products can be added and returned.
+     * The products are added one at a time.
      */
     @Test
     public void addMultipleProductTest() {
@@ -74,28 +79,41 @@ public class BasicInventoryTest {
         Assert.assertTrue(inventory.existsProduct(Barcode.BREAD));
         Assert.assertTrue(inventory.existsProduct(Barcode.WOOL));
         Assert.assertFalse(inventory.existsProduct(Barcode.EGG));
+        Assert.assertFalse(inventory.existsProduct(Barcode.JAM));
+        // There should only be 5 products in the inventory
+        Assert.assertEquals(5, inventory.getAllProducts().size());
     }
 
     /**
-     * Check if existsProduct returns true for an existing product.
-     * Check if existsProduct returns false for a non-existing product.
+     * existsProduct returns true for an existing product.
      */
     @Test
     public void existsProductTrue() {
         inventory.addProduct(Barcode.MILK, Quality.REGULAR);
-        inventory.addProduct(Barcode.MILK, Quality.IRIDIUM);
         Assert.assertTrue(inventory.existsProduct(Barcode.MILK));
         Assert.assertFalse(inventory.existsProduct(Barcode.COFFEE));
     }
 
     /**
-     * Add multiple products at once should throw an exception.
+     * existsProduct returns false for a non-existing product.
+     */
+    @Test
+    public void existsProductFalse() {
+        // Inventory with no products, should return false for all barcodes
+        for (Barcode barcode : Barcode.values()) {
+            Assert.assertFalse(inventory.existsProduct(barcode));
+        }
+    }
+
+    /**
+     * Adding multiple products at once should throw an InvalidStockRequestException.
      * Check the exception message.
      */
     @Test(expected = InvalidStockRequestException.class)
     public void addMultipleProductsAtOnceTest() throws InvalidStockRequestException {
+        Barcode barcode = Barcode.COFFEE;
         try {
-            inventory.addProduct(Barcode.MILK, Quality.REGULAR, 2);
+            inventory.addProduct(barcode, Quality.REGULAR, 2);
             Assert.fail("This should have thrown an exception");
         } catch (InvalidStockRequestException e) {
             Assert.assertEquals("Current inventory is not fancy enough. Please supply products one at a time.",
@@ -110,42 +128,49 @@ public class BasicInventoryTest {
     @Test
     public void removeNonExistentProductTest() {
         inventory.addProduct(Barcode.EGG, Quality.REGULAR);
-        List<Product> actual = inventory.removeProduct(Barcode.MILK);
+        List<Product> actual = inventory.removeProduct(Barcode.MILK); // Milk was never added
         List<Product> expected = new ArrayList<>();
         Assert.assertEquals(expected, actual);
     }
 
     /**
-     * Removing a product that is in the inventory should return a list with that product.
      * The inventory should remove the first product from the list with the given barcode.
+     * Make sure the product is actually removed from the inventory.
      */
     @Test
     public void removeProductTest() {
         //Add regular milk
-        inventory.addProduct(Barcode.MILK, Quality.IRIDIUM);
-        inventory.addProduct(Barcode.MILK, Quality.GOLD);
-        inventory.addProduct(Barcode.MILK, Quality.SILVER);
-        inventory.addProduct(Barcode.MILK, Quality.REGULAR);
+        inventory.addProduct(Barcode.MILK, Quality.IRIDIUM); // 1st milk
+        inventory.addProduct(Barcode.COFFEE, Quality.REGULAR); // random product
+        inventory.addProduct(Barcode.MILK, Quality.GOLD); // 2nd milk
+        inventory.addProduct(Barcode.EGG, Quality.REGULAR); // random product
+        inventory.addProduct(Barcode.MILK, Quality.SILVER); // 3rd milk
+        inventory.addProduct(Barcode.BREAD, Quality.REGULAR); // random product
+        inventory.addProduct(Barcode.MILK, Quality.REGULAR); // 4th milk
 
         List<Product> actual = inventory.removeProduct(Barcode.MILK);
-
         List<Product> expected = new ArrayList<>();
-        expected.add(new Milk(Quality.IRIDIUM));
+        expected.add(new Milk(Quality.IRIDIUM)); // The first milk is iridium.
+        Assert.assertEquals(expected, actual);
+        Assert.assertEquals(6, inventory.getAllProducts().size());
 
+        actual = inventory.removeProduct(Barcode.MILK);
+        expected.clear();
+        expected.add(new Milk(Quality.GOLD)); // The second milk is gold.
+        Assert.assertEquals(expected, actual);
+        Assert.assertEquals(5, inventory.getAllProducts().size());
+
+        actual = inventory.removeProduct(Barcode.MILK);
+        expected.clear();
+        expected.add(new Milk(Quality.SILVER)); // The third milk is silver.
+        Assert.assertEquals(expected, actual);
+        Assert.assertEquals(4, inventory.getAllProducts().size());
+
+        actual = inventory.removeProduct(Barcode.MILK);
+        expected.clear();
+        expected.add(new Milk(Quality.REGULAR)); // The fourth milk is regular.
         Assert.assertEquals(expected, actual);
         Assert.assertEquals(3, inventory.getAllProducts().size());
-
-        actual = inventory.removeProduct(Barcode.MILK);
-        expected.clear();
-        expected.add(new Milk(Quality.GOLD));
-        Assert.assertEquals(expected, actual);
-        Assert.assertEquals(2, inventory.getAllProducts().size());
-
-        actual = inventory.removeProduct(Barcode.MILK);
-        expected.clear();
-        expected.add(new Milk(Quality.SILVER));
-        Assert.assertEquals(expected, actual);
-        Assert.assertEquals(1, inventory.getAllProducts().size());
     }
 
     /**
@@ -157,6 +182,7 @@ public class BasicInventoryTest {
         inventory.addProduct(Barcode.MILK, Quality.REGULAR);
         inventory.removeProduct(Barcode.MILK);
         Assert.assertFalse(inventory.existsProduct(Barcode.MILK));
+        // removing one product should not affect the others
         Assert.assertTrue(inventory.existsProduct(Barcode.BREAD));
         Assert.assertEquals(1, inventory.getAllProducts().size());
     }
@@ -177,6 +203,4 @@ public class BasicInventoryTest {
             throw e;
         }
     }
-
-
 }
