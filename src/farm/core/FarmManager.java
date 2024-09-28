@@ -2,6 +2,7 @@ package farm.core;
 
 import farm.core.farmgrid.*;
 import farm.customer.Customer;
+import farm.debugged.FarmGrid;
 import farm.files.FileLoader;
 import farm.files.FileSaver;
 import farm.inventory.product.Product;

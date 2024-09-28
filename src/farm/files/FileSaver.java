@@ -1,11 +1,8 @@
 package farm.files;
 
-import farm.core.farmgrid.FarmGrid;
 import farm.core.farmgrid.Grid;
 
 import java.io.*;
-import java.util.List;
-import java.util.Scanner;
 
 public class FileSaver {
 
