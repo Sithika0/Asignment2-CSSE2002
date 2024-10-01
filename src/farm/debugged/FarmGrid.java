@@ -1,7 +1,7 @@
 package farm.debugged;
 
 import farm.core.UnableToInteractException;
-import farm.core.farmgrid.Grid;
+import farm.core.farmgrid.farmgrids.Grid;
 import farm.inventory.product.*;
 import farm.inventory.product.data.Quality;
 import farm.inventory.product.data.RandomQuality;

@@ -1,6 +1,6 @@
 package farm.files;
 
-import farm.core.farmgrid.Grid;
+import farm.core.farmgrid.farmgrids.Grid;
 
 import java.io.IOException;
 

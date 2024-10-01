@@ -10,11 +10,14 @@ public abstract class Plant {
 
     private final String name;
     private final char[] symbols;
-    private byte stage = 0; // the highest possible stage of a plant is 127.
+    // Plants start at stage 1.
+    private byte stage = 1; // the highest possible stage of a plant is 127.
 
     /**
      * Creates a new instance of Plant
-     * All plants start at stage 0.
+     * When a plant is placed is starts at stage 1.
+     * When a plant is harvested it goes to stage 0.
+     * Stage 0 and Stage 1 have the same symbol.
      * @param name the name of the plant
      * @param symbols the symbol representing the plant
      */
@@ -75,25 +78,7 @@ public abstract class Plant {
 
     @Override
     public String toString() {
-        return String.valueOf(symbols[stage]);
+        return name;
     }
 
-    /**
-     * Plants are equal iff they have the same name, stage, and symbols array.
-     * @param obj the object to compare
-     * @return true iff the objects are equal
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null || this.getClass() != obj.getClass()) {
-            return false;
-        }
-        Plant plant = (Plant) obj;
-        return getPlantName().equals(plant.getPlantName()) && getStage() == plant.getStage();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, Arrays.hashCode(symbols));
-    }
 }

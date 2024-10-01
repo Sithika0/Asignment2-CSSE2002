@@ -7,9 +7,10 @@ public class Wheat extends Plant {
     /**
      * Creates a new instance of Wheat
      * Stage 0 = ἴ
-     * Stage 1 = #
+     * Stage 1 = ἴ
+     * Stage 2 = #
      */
     public Wheat() {
-        super("wheat", new char[]{'ἴ', '#'});
+        super("wheat", new char[]{'ἴ', 'ἴ', '#'});
     }
 }

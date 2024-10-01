@@ -26,7 +26,7 @@ public class Farmer {
             plant.resetPlantGrowth();
             return process(plant.getPlantName());
         } else {
-            throw new UnableToInteractException("The plant is not ready to be harvested!");
+            throw new UnableToInteractException("The crop is not fully grown!");
         }
     }
 
@@ -60,7 +60,7 @@ public class Farmer {
      * @return true iff the plant is in its final stage
      */
     private boolean isReadyToHarvest(Plant plant) {
-        return plant.getStage() == plant.getSymbols().length - 1;
+        return plant.getSymbol() == plant.getSymbols()[plant.getSymbols().length - 1];
     }
 
     /**

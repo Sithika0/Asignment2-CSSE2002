@@ -4,6 +4,7 @@ import farm.core.Farm;
 import farm.core.FarmManager;
 import farm.core.ShopFront;
 import farm.core.UnableToInteractException;
+import farm.core.farmgrid.farmgrids.Grid;
 import farm.customer.AddressBook;
 import farm.inventory.FancyInventory;
 import farm.inventory.product.*;
@@ -201,7 +202,7 @@ public class FarmGridTest {
             itemsPlacedPlant.get(convertToPosition(INIT_ROW/2, INIT_COL/2)).set(1, Character.toString(wheatStage1));
             assertEquals("Unexpected stats produced", expectedStats(itemsPlacedPlant), plantGrid.getStats());
         } catch (Exception e) {
-            fail(shouldNotThrow);
+            fail(shouldNotThrow + " " + plantGrid.getStats());
         }
     }
 

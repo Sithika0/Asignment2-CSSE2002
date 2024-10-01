@@ -85,22 +85,8 @@ public abstract class Animal {
         return collected;
     }
 
-    /**
-     * Plants are equal iff they have the same name, stage, and symbols array.
-     * @param obj the object to compare
-     * @return true iff the objects are equal
-     */
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null || this.getClass() != obj.getClass()) {
-            return false;
-        }
-        Animal animal = (Animal) obj;
-        return getAnimalName().equals(animal.getAnimalName()) && getSymbol() == animal.getSymbol();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, symbol);
+    public String toString() {
+        return name;
     }
 }

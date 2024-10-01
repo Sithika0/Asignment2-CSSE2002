@@ -1,4 +1,4 @@
-package farm.core.farmgrid;
+package farm.core.farmgrid.farmgrids;
 
 import farm.core.UnableToInteractException;
 import farm.inventory.product.Product;

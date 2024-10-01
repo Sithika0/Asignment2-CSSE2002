@@ -1,8 +1,9 @@
 package farm.core;
 
-import farm.core.farmgrid.*;
+import farm.core.farmgrid.farmgrids.AnimalFarmGrid;
+import farm.core.farmgrid.farmgrids.Grid;
+import farm.core.farmgrid.farmgrids.PlantFarmGrid;
 import farm.customer.Customer;
-import farm.debugged.FarmGrid;
 import farm.files.FileLoader;
 import farm.files.FileSaver;
 import farm.inventory.product.Product;
@@ -107,7 +108,13 @@ public class FarmManager {
         }
 
         String farmType = input.get(1);
-        return new FarmGrid(row, col, farmType);
+        // My changes
+        if (farmType.equals("plant")) {
+            return new PlantFarmGrid(row, col);
+        } else {
+            return new AnimalFarmGrid(row, col);
+        }
+
     }
 
     /**
