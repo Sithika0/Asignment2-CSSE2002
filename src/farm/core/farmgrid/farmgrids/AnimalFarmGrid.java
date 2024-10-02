@@ -1,11 +1,10 @@
 package farm.core.farmgrid.farmgrids;
 
 import farm.core.UnableToInteractException;
-import farm.core.farmgrid.Animals.Animal;
-import farm.core.farmgrid.Animals.Chicken;
-import farm.core.farmgrid.Animals.Cow;
-import farm.core.farmgrid.Animals.Sheep;
-import farm.core.farmgrid.Farmer;
+import farm.core.farmgrid.animals.Animal;
+import farm.core.farmgrid.animals.Chicken;
+import farm.core.farmgrid.animals.Cow;
+import farm.core.farmgrid.animals.Sheep;
 import farm.inventory.product.Product;
 
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ public class AnimalFarmGrid extends FarmGrid {
      * requires rows > 0 && columns > 0
      */
     public AnimalFarmGrid(int rows, int columns) {
-        super(rows, columns);
+        super(rows, columns, "animal");
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
@@ -37,8 +36,8 @@ public class AnimalFarmGrid extends FarmGrid {
     /**
      * Overrides interact in FarmGrid to allow animal feeding.
      * @param command the interaction to perform
-     * @param row the row coordinate
-     * @param column the column coordinate
+     * @param row row coordinate
+     * @param column column coordinate
      * @return true iff the interaction is successful.
      * @throws UnableToInteractException when unknown command is given
      */
@@ -46,7 +45,7 @@ public class AnimalFarmGrid extends FarmGrid {
     public boolean interact(String command, int row, int column) throws UnableToInteractException {
         if (command.equals("feed")) {
             Animal animal = this.animalGrid.get(index(row, column));
-            farmer.feed(animal);
+            getFarmer().feed(animal);
             return true;
         }
         return super.interact(command, row, column);
@@ -127,7 +126,7 @@ public class AnimalFarmGrid extends FarmGrid {
         if (!animal.isFed()) {
             throw new UnableToInteractException("You have not fed this animal today!");
         }
-        return farmer.harvest(animal);
+        return getFarmer().harvest(animal);
     }
 
     /**

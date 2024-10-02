@@ -1,10 +1,10 @@
 package farm.core.farmgrid.farmgrids;
 
 import farm.core.UnableToInteractException;
-import farm.core.farmgrid.Plants.Berry;
-import farm.core.farmgrid.Plants.Coffee;
-import farm.core.farmgrid.Plants.Plant;
-import farm.core.farmgrid.Plants.Wheat;
+import farm.core.farmgrid.plants.Berry;
+import farm.core.farmgrid.plants.Coffee;
+import farm.core.farmgrid.plants.Plant;
+import farm.core.farmgrid.plants.Wheat;
 import farm.inventory.product.Product;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class PlantFarmGrid extends FarmGrid {
      * requires rows > 0 && columns > 0
      */
     public PlantFarmGrid(int rows, int columns) {
-        super(rows, columns);
+        super(rows, columns, "plant");
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
@@ -40,8 +40,14 @@ public class PlantFarmGrid extends FarmGrid {
         }
         Plant plant = switch (symbol) {
             case '.' -> new Berry();
+            case 'o' -> new Berry((byte) 2);
+            case '@' -> new Berry((byte) 3);
             case ':' -> new Coffee();
+            case ';' -> new Coffee((byte) 2);
+            case '*' -> new Coffee((byte) 3);
+            case '%' -> new Coffee((byte) 4);
             case 'ἴ' -> new Wheat();
+            case '#' -> new Wheat((byte) 2);
             default -> null;
         };
         if (plant == null) {
@@ -85,7 +91,7 @@ public class PlantFarmGrid extends FarmGrid {
         if (plant == null) {
             throw new UnableToInteractException("Cannot harvest from empty spot");
         }
-        return farmer.harvest(plant);
+        return getFarmer().harvest(plant);
     }
 
     @Override

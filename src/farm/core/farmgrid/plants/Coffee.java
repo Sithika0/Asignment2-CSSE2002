@@ -1,4 +1,4 @@
-package farm.core.farmgrid.Plants;
+package farm.core.farmgrid.plants;
 
 /**
  * A coffee on the farm.
@@ -14,5 +14,13 @@ public class Coffee extends Plant {
      */
     public Coffee() {
         super("coffee", new char[]{':', ':', ';', '*', '%'});
+    }
+
+    /**
+     * Loading and saving files
+     * @param stage of plant
+     */
+    public Coffee(byte stage) {
+        super("coffee", new char[]{':', ':', ';', '*', '%'}, stage);
     }
 }

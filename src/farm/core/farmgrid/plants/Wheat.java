@@ -1,4 +1,4 @@
-package farm.core.farmgrid.Plants;
+package farm.core.farmgrid.plants;
 
 /**
  * A wheat on the farm.
@@ -12,5 +12,13 @@ public class Wheat extends Plant {
      */
     public Wheat() {
         super("wheat", new char[]{'ἴ', 'ἴ', '#'});
+    }
+
+    /**
+     * Loading and saving files
+     * @param stage of plant
+     */
+    public Wheat(byte stage) {
+        super("wheat", new char[]{'ἴ', 'ἴ', '#'}, stage);
     }
 }

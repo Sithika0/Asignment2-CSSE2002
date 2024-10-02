@@ -1,4 +1,4 @@
-package farm.core.farmgrid.Animals;
+package farm.core.farmgrid.animals;
 
 /**
  * A cow on the farm.

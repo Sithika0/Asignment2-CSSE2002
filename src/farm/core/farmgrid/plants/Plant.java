@@ -1,7 +1,4 @@
-package farm.core.farmgrid.Plants;
-
-import java.util.Arrays;
-import java.util.Objects;
+package farm.core.farmgrid.plants;
 
 /**
  * A plant on the farm.
@@ -25,6 +22,12 @@ public abstract class Plant {
     protected Plant(String name, char[] symbols) {
         this.name = name;
         this.symbols = symbols;
+    }
+
+    protected Plant(String name, char[] symbols, byte stage) {
+        this.name = name;
+        this.symbols = symbols;
+        this.stage = stage;
     }
 
     /**

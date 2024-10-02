@@ -1,6 +1,4 @@
-package farm.core.farmgrid.Animals;
-
-import java.util.Objects;
+package farm.core.farmgrid.animals;
 
 /**
  * An animal on the farm.
